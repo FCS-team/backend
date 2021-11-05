@@ -7,6 +7,9 @@ const Post = require('../models/postmodels');
 const seller = require("../models/sellermodels");
 const order = require("../models/ordersmodel")
 const mong = require('mongoose');
+const msgbrd = require('messagebird');
+const { Auth,LoginCredentials } = require("two-step-auth");
+
 //get details of seller
 router.get('/:Seller_name',async (req,res) =>{
     try{
@@ -20,19 +23,41 @@ router.get('/:Seller_name',async (req,res) =>{
     
 });
 //add seller
+
 router.post('/addseller',(req,res)=>{
     const s = new seller({
         Seller_name: req.body.Seller_name,
         location: req.body.location,
+        phone:req.body.phone
+
+
         
     });
 
     s.save().then(data =>{
         res.json(data);
+
     }).catch(err => {
         res.json({message: err});
     });
 });
+
+router.post('/sellerauth',async (req,res)=>{
+    // LoginCredentials.mailID = req.body.email;
+
+    try{
+        const r = await Auth(req.body.email,"ECOM FCS");
+        console.log(r);
+        console.log(r.mail);
+        console.log(r.OTP);
+        console.log(r.success);
+        res.send(r);
+    }
+    catch(err){
+        res.send(err);
+        console.log(err);
+    }
+})
 
 //add prods by seller
 
