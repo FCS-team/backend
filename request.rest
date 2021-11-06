@@ -1,0 +1,47 @@
+GET http://localhost:3000
+
+###
+POST http://localhost:3000/posts/addseller
+Content-Type: application/json
+
+{
+    "Seller__name": "sourav",
+    "location": "Bhuto ki gali"
+}
+
+###
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+    "name" : "sourav",
+    "email" : "snapstar122@gmail.com",
+    "mobile" : "9873563210",
+    "password" : "Lapat@12345#"
+}
+###
+
+POST http://localhost:3000/api/auth/login 
+Content-Type: application/json
+
+{
+    "email": "snapstar122@gmail.com",
+    "password":"Lapat@12345#"
+}
+###
+
+POST http://localhost:3000/api/auth/emailRegister
+Content-Type: application/json
+
+{
+    "email":"sousdsr505@gmail.com",
+    "password":"123dfsa@"
+}
+###
+
+POST http://localhost:3000/api/auth/checkEmail
+Content-Type: application/json
+
+{
+    "email" : "$2b$10$1ldgavLj4Z9NfmktycaYY.m0Q7BWDohw85/SQOQ2acPTZK/3dSSj2"
+}
