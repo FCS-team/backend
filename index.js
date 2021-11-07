@@ -7,7 +7,11 @@ const path = require('path');
 const fs = require('fs');
 require("dotenv/config");
 
+const ejs= require('ejs');
+const stripe = require('stripe')('sk_test_51JtAxPSJlwxKEMaQXiwO8ZbU40zWfnRz1ozByQBtxodkB1vfv36mN8pKwxh8atcRLuwNbyiCFahxmX26QZbLBVBr00DQtaeObl');
 
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 app.use(bodyPars.urlencoded({
     extended:true
 }
@@ -24,8 +28,8 @@ app.get('/', (req,res)=>{
     res.send("We are on home");
 })
 const ssl = https.createServer({
-    key: fs.readFileSync(path.join(__dirname,'cert','private.pem')),
-    cert:fs.readFileSync(path.join(__dirname,'cert','ssl_cert.pem'))
+    key: fs.readFileSync(path.join(__dirname,'private.pem')),
+    cert:fs.readFileSync(path.join(__dirname,'ssl_cert.pem'))
 },app)
 mongoose.connect(process.env.DB_CONN,(error)=>{
     if(!error){
