@@ -17,21 +17,34 @@ app.use(bodyPars.urlencoded({
 ));
 app.use( cors( {
     origin: "http://localhost:3000",
-    methods : ['GET', 'POST']
-}))
-console.log(process.env.DB_CONN)
+    methods: ["GET", "POST"],
+  })
+);
+console.log(process.env.DB_CONN);
 
-app.use(bodyPars.urlencoded({
-    extended:true
-}
-));
+app.use(
+  bodyPars.urlencoded({
+    extended: true,
+  })
+);
 app.use(bodyPars.json());
 //Import routes
-
 
 const postroute = require("./routes/posts");
 const auth = require("./routes/auth");
 
+app.use("/posts", postroute);
+app.use("/api/auth", auth);
+app.get("/", (req, res) => {
+  res.send("We are on home");
+});
+const ssl = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, "private.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "ssl_cert.pem")),
+  },
+  app
+);
 
 app.use("/api/auth", auth)
 app.use('/posts',postroute);
