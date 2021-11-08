@@ -7,8 +7,8 @@ const Post = require('../models/postmodels');
 const seller = require("../models/sellermodels");
 const order = require("../models/ordersmodel")
 const mong = require('mongoose');
-const msgbrd = require('messagebird');
-const { Auth,LoginCredentials } = require("two-step-auth");
+// const msgbrd = require('messagebird');
+// const { Auth,LoginCredentials } = require("two-step-auth");
 
 //get details of seller
 router.get('/:Seller_name',async (req,res) =>{

@@ -9,7 +9,7 @@ const fs = require('fs');
 require("dotenv/config");
 app.use(express.json())
 app.use( cors( {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:5000"],
     methods : ['GET', 'POST']
 }))
 console.log(process.env.DB_CONN)
@@ -31,10 +31,10 @@ app.use("/api/auth", auth)
 app.get('/', (req,res)=>{
     res.send("We are on home");
 })
-const ssl = https.createServer({
-    key: fs.readFileSync(path.join(__dirname,'cert','private.pem')),
-    cert:fs.readFileSync(path.join(__dirname,'cert','ssl_cert.pem'))
-},app)
+// const ssl = https.createServer({
+//     key: fs.readFileSync(path.join(__dirname,'cert','private.pem')),
+//     cert:fs.readFileSync(path.join(__dirname,'cert','ssl_cert.pem'))
+// },app)
 
 mongoose.connect(process.env.DB_CONN,(error)=>{
     if(!error){
@@ -44,5 +44,5 @@ mongoose.connect(process.env.DB_CONN,(error)=>{
         console.log("error connecting to db")
     }
 })
-ssl.listen(5500,()=> console.log("ssl server live"));
+// ssl.listen(5500,()=> console.log("ssl server live"));
 app.listen(5000);

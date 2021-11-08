@@ -46,7 +46,16 @@ router.post('/login', async (req, res) => {
     const pass = await secrets.findOne({link: user_name.id})
     if(await bcrypt.compare(password, pass.key)){
         res.header("Access-Control-Allow-Origin", "*");
-        return res.status(200).send(await user.findOne({user_name : user_name.id}))
+        const token = jwt.sign(
+            { user_id: user._id, email },
+            process.env.TOKEN_KEY,
+            {
+              expiresIn: "15m",
+            }
+          );
+          const real__user = await user.findOne({user_name : user_name.id})
+          real__user.token = token
+        return res.status(200).send(real__user)
     }
     return res.send("Password is incorrect")
 })
