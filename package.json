@@ -18,6 +18,8 @@
     "express-handlebars": "^5.3.4",
     "mongoose": "^6.0.9",
     "node-fetch": "^3.0.0",
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.13",
+    "stripe": "^8.186.1",
+    "two-step-auth": "^1.1.2"
   }
 }
