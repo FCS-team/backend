@@ -5,12 +5,15 @@ const { re } = require("semver");
 const router = express.Router();
 const Post = require("../models/postmodels");
 const seller = require("../models/sellermodels");
-const order = require("../models/ordersmodel");
-// const mong = require("mongoose");
-// const msgbrd = require('messagebird');
-const { Auth, LoginCredentials } = require("two-step-auth");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
-
+const order = require("../models/ordersmodel")
+const mong = require('mongoose');
+const msgbrd = require('messagebird');
+const { Auth,LoginCredentials } = require("two-step-auth");
+const user = require("../models/usersmodel");
+const check = require("../models/usersmodel");
+const cart = require("../models/cartmodel");
+const ejs= require('ejs');
+const stripe = require('stripe')('sk_test_51JtAxPSJlwxKEMaQXiwO8ZbU40zWfnRz1ozByQBtxodkB1vfv36mN8pKwxh8atcRLuwNbyiCFahxmX26QZbLBVBr00DQtaeObl');
 
 
 //get details of seller
@@ -40,22 +43,59 @@ router.post("/addseller", (req, res) => {
       res.json({ message: err });
     });
 });
+router.post('/adduser', async (req,res)=>{
+    const u = new user({
+        name: req.body.name,
+        address: req.body.address,
+        phone:req.body.phone,
+        email: req.body.email,
+        wallet:req.body.wallet
 
-router.post("/sellerauth", async (req, res) => {
-  // LoginCredentials.mailID = req.body.email;
 
-  try {
-    const r = await Auth(req.body.email, "ECOM FCS");
-    console.log(r);
-    console.log(r.mail);
-    console.log(r.OTP);
-    console.log(r.success);
-    res.send(r);
-  } catch (err) {
-    res.send(err);
-    console.log(err);
-  }
+        
+    });
+
+    u.save().then(data =>{
+        
+        res.json(data);
+
+    }).catch(err => {
+        res.json({message: err});
+    });
+})
+
+router.patch('/updatewallet',async (req,res)=>{
+    try{
+
+    
+    const u = await user.updateOne({_id:req.body.userId},{$set:{wallet:req.body.wallet}});
+    u.save().then(data =>{
+        res.json(data);
+    }).catch(err=>{
+        res.json({message:err});
+    })
+}
+    catch(err){
+        res.json({message:err});
+    }
+
 });
+router.post('/sellerauth',async (req,res)=>{
+    // LoginCredentials.mailID = req.body.email;
+
+    try{
+        const r = await Auth(req.body.email,"ECOM FCS");
+        console.log(r);
+        console.log(r.mail);
+        console.log(r.OTP);
+        console.log(r.success);
+        res.send(r);
+    }
+    catch(err){
+        res.send(err);
+        console.log(err);
+    }
+})
 
 //add prods by seller
 
@@ -90,13 +130,27 @@ router.post("/selleraddprod/:Seller_name", (req, res) => {
     });
 });
 //get a specific post
-router.get("/:postId", async (req, res) => {
-  try {
-    const p = await Post.findById(req.params.postId);
-    res.json(p);
-  } catch (err) {
-    res.json({ message: err });
-  }
+router.get('/:postId',async (req,res)=>{
+    try{
+        const p = await Post.updateOne(req.params.postId);
+        res.json(p);
+    }
+    catch(err){
+        res.json({message:err});
+    }
+
+});
+//get all prods with same category
+router.get('/search/:category',async (req,res)=>{
+    try{
+        const p = await Post.find({category:req.params.category});
+        console.log(req.params.category);
+        res.json(p);
+    }
+    catch(err){
+        res.json({message:err});
+    }
+
 });
 // get all prods with same name
 router.get("/:product_name", async (req, res) => {
@@ -209,6 +263,82 @@ router.post("/payments", async (req, res) => {
     });
   }
 });
+//checkout
+router.post('/checkout', async (req,res) =>{
+    const ch = new check({
+        products: req.body.products,
+        price: req.body.price,
+        Seller_name: req.body.Seller_name,
+        qty: req.body.qty,
+        userId: req.body.userId
+    });
+    ch.save().then(data =>{
+        res.json(data);
+    }).catch(err => {
+        res.json({message: err});
+    });
+});
+// router.post("/checkout", (req, res) => {
+//     const ch = new check({
+//         products: req.body.products,
+//         price: req.body.price,
+//         username: req.body.username,
+//         qty: req.body.qty,
+//         userId: req.body.userId
+//     });
+//     ch.save().then(data =>{
+//         res.json(data);
+//     }).catch(err => {
+//         res.json({message: err});
+//     });
+    // try {
+    //   stripe.customers
+    //     .create({
+    //       name: req.body.username,
+    //       email: req.body.email,
+    //       source: req.body.stripeToken
+    //     })
+    //     .then(customer =>
+    //       stripe.charges.create({
+    //         amount: parseInt(req.body.price),
+    //         currency: "inr",
+    //         customer: req.body.userId
+    //       })
+    //     )
+    //     .then(() => res.render("completed.html"))
+    //     .catch(err => console.log(err));
+    // } catch (err) {
+    //   res.send(err);
+    // }
+//   });
+// delete seller
+
+router.delete('/deleteseller/:sellerId',async (req,res)=>{
+    try{
+        const p = await seller.remove({_id: req.params.sellerId});
+        res.json(p);
+    }
+    catch(err){
+        res.json({message:err});
+    }
+
+});
+
+//add to cart
+router.post('/addtocart', async (req,res)=>{
+    const c = new cart({
+        prodname:req.body.prodname,
+        price:req.body.price,
+        qty:req.body.qty,
+        userId:req.body.userId
+    })
+    c.save().then(data =>{
+        res.json(data);
+    }).catch(err => {
+        res.json({message: err});
+    });
+
+})
 
 
 module.exports = router;

@@ -1,31 +1,27 @@
+const { json } = require('express/lib/response');
 const mongoose = require('mongoose');
 
-const postschema = mongoose.Schema({
-    product_name:{
+const user_schema = mongoose.Schema({
+    name:{
         type:String,
         required:true
     },
 
-    description:{
+    phone:{
         type:String,
         required:true},
-    category: {
+    email: {
         type:String,
         required:true},
-    price: {
+    address: {
         type:String,
         required:true},
-    Seller_name: {
+    wallet:{
         type:String,
         required:true},
-    qty:{
-        type:String,
-        required:true}
+
+
 });
 
-
-
-
-
-module.exports = mongoose.model('postmodels',postschema);
+module.exports = mongoose.model('usersmodel',user_schema);
 

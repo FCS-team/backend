@@ -27,6 +27,9 @@ const user_schema = mongoose.Schema({
     image: {
         type: String,
         require: true
+    },
+    token: {
+        type:String,
     }
 
 })
