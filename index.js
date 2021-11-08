@@ -8,7 +8,7 @@ const fs = require('fs');
 require("dotenv/config");
 const ejs= require('ejs');
 const cors = require("cors");
-const stripe = require('stripe')('sk_test_51JtAxPSJlwxKEMaQXiwO8ZbU40zWfnRz1ozByQBtxodkB1vfv36mN8pKwxh8atcRLuwNbyiCFahxmX26QZbLBVBr00DQtaeObl');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_TEST);
 
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
@@ -17,7 +17,7 @@ app.use(bodyPars.urlencoded({
 }
 ));
 app.use( cors( {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","http://localhost:5000","https://localhost:5500"],
     methods: ["GET", "POST"],
   })
 );

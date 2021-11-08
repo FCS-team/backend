@@ -59,4 +59,54 @@ router.post('/login', async (req, res) => {
     }
     return res.send("Password is incorrect")
 })
+
+router.patch('/update/name',async (req,res) =>{
+    try{
+        const u = await user.updateOne({_id:req.params.userId},
+            {$set:{name:req.body.name}});
+        u.save().then(data =>{
+            res.json(data);
+        }).catch(err=>{
+            res.json({message:err});
+        });
+
+    }
+    catch(err){
+        res.json({message:err});
+    }
+})
+
+router.patch('/update/username',async (req,res) =>{
+    try{
+        const u = await user.updateOne({_id:req.params.userId},
+            {$set:{user_name:req.body.user_name}});
+        u.save().then(data =>{
+            res.json(data);
+        }).catch(err=>{
+            res.json({message:err});
+        });
+
+    }
+    catch(err){
+        res.json({message:err});
+    }
+})
+
+router.patch('/update/phone',async (req,res) =>{
+    try{
+        const u = await user.updateOne({_id:req.params.userId},
+            {$set:{mobile:req.body.mobile}});
+        u.save().then(data =>{
+            res.json(data);
+        }).catch(err=>{
+            res.json({message:err});
+        });
+
+    }
+    catch(err){
+        res.json({message:err});
+    }
+})
+
+
 module.exports = router

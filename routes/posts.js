@@ -13,9 +13,8 @@ const user = require("../models/usersmodel");
 const check = require("../models/usersmodel");
 const cart = require("../models/cartmodel");
 const ejs = require("ejs");
-const stripe = require("stripe")(
-  "sk_test_51JstOkSDisUUgHqFBGulleOJsw5KNkwqXKVpqlrCEcNUy0T2Nmga0kW2CxrSnZ5C0GHfHCyPXYkICzouCSqZnq1Z00ErVpNgCO"
-);
+// const stripe = require("stripe")(
+// );
 
 //get details of seller
 router.get("/:Seller_name", async (req, res) => {
@@ -94,6 +93,15 @@ router.post("/sellerauth", async (req, res) => {
     console.log(err);
   }
 });
+//verify otp
+router.post('/verifyOTP',async (req,res)=>{
+  if(OTP==req.body.OTP){
+      res.json({message:"success otp verified"});
+  }
+  else{
+      res.json({message:"verification unsuccessful"});
+  }
+})
 
 //add prods by seller
 
@@ -335,4 +343,38 @@ router.post("/addtocart", async (req, res) => {
     });
 });
 
+
+//update email
+router.patch('/update/email',async (req,res) =>{
+  try{
+      const u = await user.updateOne({_id:req.body.userId},
+          {$set:{email:req.body.email}});
+      u.save().then(data =>{
+          res.json(data);
+      }).catch(err=>{
+          res.json({message:err});
+      });
+
+  }
+  catch(err){
+      res.json({message:err});
+  }
+})
+
+//update address
+router.patch('/update/address',async (req,res) =>{
+  try{
+      const u = await user.updateOne({_id:req.body.userId},
+          {$set:{address:req.body.address}});
+      u.save().then(data =>{
+          res.json(data);
+      }).catch(err=>{
+          res.json({message:err});
+      });
+
+  }
+  catch(err){
+      res.json({message:err});
+  }
+})
 module.exports = router;
