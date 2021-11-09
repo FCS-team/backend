@@ -30,6 +30,9 @@ const user_schema = mongoose.Schema({
     },
     token: {
         type:String,
+    },
+    address : {
+        type: Object,
     }
 
 })
