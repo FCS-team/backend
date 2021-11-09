@@ -1,7 +1,46 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
 const { user, userName, secrets } = require('../models/credential')
 
+let refreshTokens=[];
+
+
+function auth(req,res,next){
+    let token = req.headers["authorization"];
+    token = token.split(" ")[1];
+    jwt.verify(token, "access", (err,u)=>{
+        if(!err){
+            req.u = u;
+            next();
+        }
+        else{
+            return res.json({message:"User not authenticated"});
+        }
+    })
+
+}
+
+router.post('/renewtoken',(req,res)=>{
+    const refreshtoken = req.body.token;
+    if(!refreshtoken || !refreshTokens.includes(refreshtoken)){
+        res.json({message:"User not authenticated"});
+    }
+    jwt.verify(refreshtoken,"refresh",(err,u)=>{
+        if(!err){
+            const accesstoken = jwt.sign({name:u.name},"access",{expiresIn:"15m"});
+            res.json({accesstoken});
+        }
+        else{
+            return res.json({message:"User not authenticated"});
+        }
+    })
+})
+
+
+router.post('/protected', auth,(req,res)=>{
+    res.send("Inside protected");
+})
 
 router.post('/register', async (req, res)=> {
     const userExist = await userName.findOne({email : req.body.email})
@@ -35,6 +74,16 @@ router.post('/register', async (req, res)=> {
 })
 
 router.post('/login', async (req, res) => {
+    // const {u} = req.body;
+    // if(!u){
+    //     return res.status(404).json({message:"Empty body"});
+
+    // }
+    let accesstoken = jwt.sign(req.body, "access",{expiresIn:"15m"});
+    
+    let refreshtoken = jwt.sign(req.body, "refresh",{expiresIn:"7d"});
+   
+    refreshTokens.push(refreshtoken);
 
     const email = req.body.email
     const password = req.body.password
@@ -46,16 +95,20 @@ router.post('/login', async (req, res) => {
     const pass = await secrets.findOne({link: user_name.id})
     if(await bcrypt.compare(password, pass.key)){
         res.header("Access-Control-Allow-Origin", "*");
-        const token = jwt.sign(
-            { user_id: user._id, email },
-            process.env.TOKEN_KEY,
-            {
-              expiresIn: "15m",
-            }
-          );
+        // const token = jwt.sign(
+        //     { user_id: user._id, email },
+        //     process.env.TOKEN_KEY,
+        //     {
+        //       expiresIn: "15m",
+        //     }
+        //   );
           const real__user = await user.findOne({user_name : user_name.id})
-          real__user.token = token
-        return res.status(200).send(real__user)
+          real__user.token = accesstoken
+        return res.status(200).json({
+            real__user,
+            accesstoken,
+            refreshtoken
+        })
     }
     return res.send("Password is incorrect")
 })
