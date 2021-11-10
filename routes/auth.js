@@ -2,7 +2,9 @@ const router = require('express').Router()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const { user, userName, secrets } = require('../models/credential')
-
+const {createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken    } = require("../middleware/tokens");
+const { isRefresh } = require('../middleware/isAuth');
+const { send } = require('express/lib/response');
 let refreshTokens=[];
 
 
@@ -74,92 +76,69 @@ router.post('/register', async (req, res)=> {
 })
 
 router.post('/login', async (req, res) => {
+    
     // const {u} = req.body;
     // if(!u){
     //     return res.status(404).json({message:"Empty body"});
 
     // }
-    let accesstoken = jwt.sign(req.body, "access",{expiresIn:"15m"});
+    // let accesstoken = jwt.sign(req.body, "access", process.TOKEN_KEY,{expiresIn:"15m"});
     
-    let refreshtoken = jwt.sign(req.body, "refresh",{expiresIn:"7d"});
+    // let refreshtoken = jwt.sign(req.body, "refresh",{expiresIn:"7d"});
    
-    refreshTokens.push(refreshtoken);
+    // refreshTokens.push(refreshtoken);
+    try{
+        const {email, password} = req.body
+        if(!email)
+        {
+            return res.header('Access-Control-Allow-Credentials', true).status(400).send({error:"no refresh token"})
+        }
+        const user_name = await userName.findOne({email: email})
+        if(user_name==null)
+        {
+            return res.header('Access-Control-Allow-Credentials', true).status(200).send({error:"user does not exist"})
+        }
+        const pass = await secrets.findOne({link: user_name.id})
+        if(await bcrypt.compare(password, pass.key)){
+            // res.header("Access-Control-Allow-Origin", "*");
 
-    const email = req.body.email
-    const password = req.body.password
-    const user_name = await userName.findOne({email: email})
-    if(user_name==null)
+            const real__user = await user.findOne({user_name : user_name.id})
+            const accesstoken = createAccessToken(real__user)
+            const refreshtoken = createRefreshToken(user_name.id)
+            //   real__user.token = accesstoken
+            // return res.status(200).json({
+            //     real__user,
+            //     accesstoken,
+            //     refreshtoken
+            // })
+            sendRefreshToken(res, refreshtoken)
+            sendAccessToken(res, req, accesstoken)
+        }
+        return res.header('Access-Control-Allow-Credentials', true).send({error: "Password is incorrect"})
+    }catch(err){
+
+    }
+    
+})
+
+router.post('/logout', (_req, res) => {
+    res.clearCookie('refreshtoken', { path: '/refresh_token' });
+    // Logic here for also remove refreshtoken from db
+    return res.send({
+      message: 'Logged out',
+    });
+  });
+
+router.post("/refreshLogin", async(req, res) => {
+    const token = req.cookies.refreshtoken
+    if(token)
     {
-        return res.status(200).send("user does not exist")
+        userId = isRefresh(token)
+        const real_user = await user.findOne({user_name:userId})
+        const accesstoken = createAccessToken(real_user)
+
+        return sendAccessToken(res, req, accesstoken)
     }
-    const pass = await secrets.findOne({link: user_name.id})
-    if(await bcrypt.compare(password, pass.key)){
-        res.header("Access-Control-Allow-Origin", "*");
-        // const token = jwt.sign(
-        //     { user_id: user._id, email },
-        //     process.env.TOKEN_KEY,
-        //     {
-        //       expiresIn: "15m",
-        //     }
-        //   );
-          const real__user = await user.findOne({user_name : user_name.id})
-          real__user.token = accesstoken
-        return res.status(200).json({
-            real__user,
-            accesstoken,
-            refreshtoken
-        })
-    }
-    return res.send("Password is incorrect")
+    return res.status(400).send({error:"no refresh token"})
 })
-
-router.patch('/update/name',async (req,res) =>{
-    try{
-        const u = await user.updateOne({_id:req.params.userId},
-            {$set:{name:req.body.name}});
-        u.save().then(data =>{
-            res.json(data);
-        }).catch(err=>{
-            res.json({message:err});
-        });
-
-    }
-    catch(err){
-        res.json({message:err});
-    }
-})
-
-router.patch('/update/username',async (req,res) =>{
-    try{
-        const u = await user.updateOne({_id:req.params.userId},
-            {$set:{user_name:req.body.user_name}});
-        u.save().then(data =>{
-            res.json(data);
-        }).catch(err=>{
-            res.json({message:err});
-        });
-
-    }
-    catch(err){
-        res.json({message:err});
-    }
-})
-
-router.patch('/update/phone',async (req,res) =>{
-    try{
-        const u = await user.updateOne({_id:req.params.userId},
-            {$set:{mobile:req.body.mobile}});
-        u.save().then(data =>{
-            res.json(data);
-        }).catch(err=>{
-            res.json({message:err});
-        });
-
-    }
-    catch(err){
-        res.json({message:err});
-    }
-})
-
-
 module.exports = router
