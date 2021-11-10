@@ -63,13 +63,25 @@ router.post('/register', async (req, res)=> {
       email: req.body.email,
       mobile: req.body.mobile,
       dob: req.body.dob,
-      image: `https://avatars.dicebear.com/api/human/${seed}.svg `,          
+      role: req.body.role,
+      image: `https://avatars.dicebear.com/api/human/${seed}.svg `, 
+      address : {
+          flat: "",
+          locality:"",
+          state:"",
+          pin:"",
+          district:""
+      }         
     })
     try{
         await created__user.save()
         await pass.save()
         await user_name.save()
-        res.status(200).send(created__user)
+        const accesstoken = createAccessToken(created__user)
+        const refreshtoken = createRefreshToken(user_name.id)
+        sendRefreshToken(res, refreshtoken)
+        sendAccessToken(res, req, accesstoken)
+        // res.status(200).send(created__user)
     }catch(err){
         console.log(err)
     }

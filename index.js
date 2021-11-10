@@ -40,7 +40,7 @@ const detailChange = require('./routes/detailChange')
 const cartRoute = require("./routes/cart")
 app.use("/posts", postroute);
 app.use("/api/auth", auth);
-app.use("/prodile", detailChange)
+app.use("/update", detailChange)
 app.use("/cart", cartRoute)
 app.get("/", (req, res) => {
   res.send("We are on home");
