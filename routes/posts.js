@@ -13,6 +13,7 @@ const user = require("../models/usersmodel");
 const check = require("../models/usersmodel");
 const cart = require("../models/cartmodel");
 const ejs = require("ejs");
+const { userName } = require("../models/credential");
 // const stripe = require("stripe")(
 // );
 
@@ -327,21 +328,6 @@ router.delete("/deleteseller/:sellerId", async (req, res) => {
 });
 
 //add to cart
-router.post("/addtocart", async (req, res) => {
-  const c = new cart({
-    prodname: req.body.prodname,
-    price: req.body.price,
-    qty: req.body.qty,
-    userId: req.body.userId,
-  });
-  c.save()
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((err) => {
-      res.json({ message: err });
-    });
-});
 
 
 //update email
