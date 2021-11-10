@@ -22,9 +22,11 @@
     "messagebird": "^3.7.1",
     "mongoose": "^6.0.9",
     "node-fetch": "^3.0.0",
-    "nodemon": "^2.0.13",
     "semver": "^7.3.5",
     "stripe": "^8.186.1",
     "two-step-auth": "^1.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
