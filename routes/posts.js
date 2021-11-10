@@ -22,7 +22,6 @@ const { userName } = require("../models/credential");
 router.get("/:Seller_name", async (req, res) => {
   try {
     const P = await Post.find({ Seller_name: req.params.Seller_name });
-    console.log(P);
     res.json(P);
   } catch (err) {
     res.json({ message: err });
@@ -85,14 +84,10 @@ router.post("/sellerauth", async (req, res) => {
 
   try {
     const r = await Auth(req.body.email, "ECOM FCS");
-    console.log(r);
-    console.log(r.mail);
-    console.log(r.OTP);
-    console.log(r.success);
+
     res.send(r);
   } catch (err) {
     res.send(err);
-    console.log(err);
   }
 });
 //verify otp
@@ -151,7 +146,6 @@ router.get("/:postId", async (req, res) => {
 router.get("/search/:category", async (req, res) => {
   try {
     const p = await Post.find({ category: req.params.category });
-    console.log(req.params.category);
     res.json(p);
   } catch (err) {
     res.json({ message: err });
@@ -209,16 +203,12 @@ router.post("/placeorder", async (req, res) => {
   });
 
   const t = await Post.find({ _id: req.body.prod_id });
-  console.log(t);
-  console.log(typeof t);
+
   var giv_qty = req.body.qty;
   var old_qty = t[0]["qty"];
   prod_id = req.body.prod_id;
-  console.log(old_qty);
-  console.log(req.body.qty);
   let s = 0;
   str = parseInt(old_qty) - parseInt(req.body.qty) + "";
-  console.log(str);
   try {
     if (parseInt(str) >= 0) {
       const p = await Post.updateOne({ _id: prod_id }, { $set: { qty: str } });
@@ -244,9 +234,7 @@ router.post("/placeorder", async (req, res) => {
 });
 
 router.post("/payments", async (req, res) => {
-  console.log("stripe-routes.js 9 | route reached", req.body);
   let { amount, id } = req.body;
-  console.log("stripe-routes.js 10 | amount and id", amount, id);
   try {
     const payment = await stripe.paymentIntents.create({
       amount: amount,
@@ -255,13 +243,11 @@ router.post("/payments", async (req, res) => {
       payment_method: id,
       confirm: true,
     });
-    console.log("stripe-routes.js 19 | payment", payment);
     res.json({
       message: "Payment Successful",
       success: true,
     });
   } catch (error) {
-    console.log("stripe-routes.js 17 | error", error);
     res.json({
       message: "Payment Failed",
       success: false,

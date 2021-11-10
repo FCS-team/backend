@@ -83,7 +83,7 @@ router.post('/register', async (req, res)=> {
         sendAccessToken(res, req, accesstoken)
         // res.status(200).send(created__user)
     }catch(err){
-        console.log(err)
+        res.send({error:err})
     }
 })
 

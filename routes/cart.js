@@ -4,7 +4,6 @@ const { user, userName, secrets } = require("../models/credential")
 const {isAuth} = require("../middleware/isAuth")
 router.post("/updatecart", async (req, res) => {
   const u = isAuth(req);
-  console.log(`products: ${req.body.products}`)
   if(u==false || !userName.findOne({_id:u.user_name})){
     return res.json({message:"User is not authenticated"});  
   }

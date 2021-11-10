@@ -10,14 +10,15 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/api/auth/register
+POST http://localhost:5000/api/auth/register
 Content-Type: application/json
-
 {
     "name" : "sourav",
     "email" : "snapstar122@gmail.com",
     "mobile" : "9873563210",
-    "password" : "Lapat@12345#"
+    "password" : "Lapat@12345#",
+    "role":"seller",
+    "dob":"17-11-2000"
 }
 ###
 
