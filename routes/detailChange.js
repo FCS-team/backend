@@ -1,7 +1,12 @@
 const router = require('express').Router()
 const { user, userName, secrets } = require('../models/credential')
-
+const auth = require("../middleware/isAuth")
 router.post('/profile',async (req, res) => {
+    const u = auth.isAuth(req);
+
+  if(u==false || !userName.findOne({_id:u.user_name})){
+    return res.json({message:"User is not authenticated"});  
+  }
 
     console.log(req.body)
     const oldemail =  req.body.email    

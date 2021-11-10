@@ -14,6 +14,7 @@ const check = require("../models/usersmodel");
 const cart = require("../models/cartmodel");
 const ejs = require("ejs");
 const { userName } = require("../models/credential");
+
 // const stripe = require("stripe")(
 // );
 
@@ -108,6 +109,7 @@ router.post('/verifyOTP',async (req,res)=>{
 
 //Get all prods
 router.get("/", async (req, res) => {
+  
   try {
     const p = await Post.find();
     res.json(p);

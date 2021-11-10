@@ -1,8 +1,13 @@
 const router = require('express').Router()
 const cart = require("../models/cartmodel")
-const {userName} = require("../models/credential")
-
+const { user, userName, secrets } = require("../models/credential")
+const auth = require("../middleware/isAuth")
 router.post("/addtocart", async (req, res) => {
+  const u = auth.isAuth(req);
+
+  if(u==false || !userName.findOne({_id:u.user_name})){
+    return res.json({message:"User is not authenticated"});  
+  }
     console.log(req.body.product)
     var userExist = await cart.findOne({userId: req.body.user_name})
     
@@ -43,6 +48,11 @@ router.post("/addtocart", async (req, res) => {
   });
   
   router.post("/getcart", async (req, res)=>{
+    const u = auth.isAuth(req);
+
+    if(u==false || !userName.findOne({_id:u.user_name})){
+      return res.json({message:"User is not authenticated"});  
+    }
     const userExist = await cart.findOne({userId:req.body.user_name})
     if(!userExist){
       return res.send([])
