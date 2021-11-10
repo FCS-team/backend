@@ -2,7 +2,8 @@ const router = require('express').Router()
 const { user, userName, secrets } = require('../models/credential')
 
 router.post('/profile',async (req, res) => {
-    console.log(req)
+
+    console.log(req.body)
     const oldemail =  req.body.email    
     const userDetails = await user.findOne({email: oldemail})
     if(!userDetails){
