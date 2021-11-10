@@ -19,12 +19,11 @@ app.use(bodyPars.urlencoded({
 }
 ));
 app.use( cors( {
-    origin: ["http://localhost:3000","http://localhost:5000","http://localhost:5500", "http://127.0.0.1:5500"],
+    origin: ["http://localhost:3000","http://localhost:5000","http://localhost:5500", "http://127.0.0.1:5500", process.env.FRONT_END],
     methods: ["GET", "POST"],
     credentials:true
   })
 );
-console.log(process.env.DB_CONN);
 
 app.use(
   bodyPars.urlencoded({
@@ -64,5 +63,5 @@ mongoose.connect(process.env.DB_CONN,(error)=>{
         console.log(error)
     }
 })
-ssl.listen(5600,()=> console.log("ssl server live"));
-app.listen(5000);
+ssl.listen(process.env.SSL_PORT,()=> console.log("ssl server live"));
+app.listen(process.env.PORT);
