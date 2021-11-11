@@ -107,6 +107,40 @@ router.post('/verifyOTP',async (req,res)=>{
 
 //add prods by seller
 
+//get all seller
+router.get("/getsellers", async (req, res) => {
+  try {
+    const s = await seller.find();
+    console.log(s);
+    res.json(s);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
+//get all users
+router.get("/getbuyers", async (req, res) => {
+  try {
+    const u = await realuser.find();
+    console.log(u);
+    res.json(u);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
+//get all users 
+router.get("/getall", async (req, res) => {
+  try {
+    const s = await seller.find();
+    const u = await realuser.find();
+    res.json({
+      s,u
+    });
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 //Get all prods
 router.get("/", async (req, res) => {
   
