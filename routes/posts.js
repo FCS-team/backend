@@ -35,6 +35,7 @@ router.post("/addseller", (req, res) => {
     Seller_name: req.body.Seller_name,
     location: req.body.location,
     phone: req.body.phone,
+    email: req.body.email
   });
 
   s.save()

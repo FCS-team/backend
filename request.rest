@@ -10,14 +10,16 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/api/auth/register
+POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
     "name" : "sourav",
-    "email" : "snapstar122@gmail.com",
+    "email" : "snapsta122@gmail.com",
     "mobile" : "9873563210",
-    "password" : "Lapat@12345#"
+    "password" : "Lapat@12345#",
+    "role": "buyer",
+    "dob":"17-11-2000"
 }
 ###
 
@@ -74,4 +76,27 @@ Content-Type: application/json
 
 {
     "user_name" : "618a0c60a77b677b943629b9"
+}
+###
+
+GET http://localhost:5000/user/getall
+
+###
+
+POST http://localhost:5000/user/addseller
+Content-Type: "application/json"
+
+{
+    "Seller_name" : "ere",
+    "phone": "1234567890",
+    "location": "dfjadsklfjasd",
+    "email": "sourav123@gmail.com"
+}
+###
+
+POST http://localhost:5000/user/delete 
+Content-Type: "application/json"
+
+{
+    "user_name": "618c050c7b485a5d7a03bcf5"
 }

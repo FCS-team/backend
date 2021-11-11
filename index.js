@@ -19,7 +19,7 @@ app.use(bodyPars.urlencoded({
 }
 ));
 app.use( cors( {
-    origin: ["http://localhost:3000","http://localhost:5000","http://localhost:5500", "http://127.0.0.1:5500", process.env.FRONT_END],
+    origin: ["http://localhost:3000", process.env.FRONT_END],
     methods: ["GET", "POST"],
     credentials:true
   })
@@ -37,9 +37,11 @@ const postroute = require("./routes/posts");
 const auth = require("./routes/auth");
 const detailChange = require('./routes/detailChange')
 const cartRoute = require("./routes/cart")
+const userapi = require('./routes/userapi')
 app.use("/posts", postroute);
 app.use("/api/auth", auth);
 app.use("/update", detailChange)
+app.use('/user', userapi);
 app.use("/cart", cartRoute)
 app.get("/", (req, res) => {
   res.send("We are on home");

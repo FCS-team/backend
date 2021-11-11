@@ -8,7 +8,6 @@ router.post('/profile',async (req, res) => {
     return res.json({message:"User is not authenticated"});  
   }
 
-    console.log(req.body)
     const oldemail =  req.body.email    
     const userDetails = await user.findOne({email: oldemail})
     if(!userDetails){
