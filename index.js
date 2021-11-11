@@ -19,7 +19,7 @@ app.use(bodyPars.urlencoded({
 }
 ));
 app.use( cors( {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", process.env.FRONT_END],
     methods: ["GET", "POST"],
     credentials:true
   })
